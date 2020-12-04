@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 import traceback
+from random import randint
 from typing import Optional
 
 import discord.utils
@@ -16,13 +17,34 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="!")
 
-CONTEST_NOTIF = bot.get_channel(782946468289576990)
-SPAM = bot.get_channel(772437968538435594)
+HKOI_SERVER_ID = 761629421966065686
+CONTEST_NOTIF_ID = 782946468289576990
+SPAM_ID = 772437968538435594
+BOT_STATUS_ID = 784303031319134229
+EMOTE_LOGS_ID = 784254643185909790
 
 
 @bot.event
 async def on_ready():
-    print(f"Coggers initiated. {bot.user} starting...")
+    print(f"Coggers activated. {bot.user} starting...")
+    await bot.get_channel(BOT_STATUS_ID).send("Coggers initiated. Starting...")
+
+
+@bot.command()
+@commands.is_owner()
+async def shutdown(ctx):
+    await asyncio.gather(
+        ctx.send("Coggers deactivated. Shutting down..."),
+        bot.get_channel(BOT_STATUS_ID).send("Coggers deactivated. Shutting down...")
+    )
+    await ctx.bot.logout()
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        return
+    raise error from None
 
 
 @bot.command()
@@ -34,12 +56,6 @@ def sep_emojis(emoji, cnt):
     """Bypass Discord message limit by separating emoijs into muliple messges."""
     emoji = str(emoji)
     per_msg = 2000 // len(emoji)
-    try:
-        cnt = int(cnt)
-    except:
-        cnt = 1
-    cnt = max(cnt, 1)    # Min: 1
-    cnt = min(cnt, 420)  # Max: 420
     sep_msgs = []
     while True:
         if cnt >= per_msg:
@@ -56,6 +72,16 @@ async def send_emojis(ctx, emoji_name, cnt):
     if not emoji:
         await ctx.send("no")
         return
+
+    # Sanitize cnt
+    try:
+        cnt = int(cnt)
+        if cnt <= 0:     # Min: 1
+            raise ValueError
+    except:
+        cnt = randint(1, 420)
+    cnt = min(cnt, 420)  # Max: 420
+
     sep_msgs = sep_emojis(emoji, cnt)
     # Note: Asynchronously sent message arrive in arbitrary order
     # We send the messages ASAP while keeping the message with the least emojis the last to arrive for A E S T H E T I C S
@@ -64,6 +90,12 @@ async def send_emojis(ctx, emoji_name, cnt):
     else:
         await asyncio.gather(*[ctx.send(msg) for msg in sep_msgs[:-1]])
         await ctx.send(sep_msgs[-1])
+
+    # orz ITO asked this to implemented
+    if ctx.guild.id == HKOI_SERVER_ID:  # HKOI server only
+        await ctx.message.delete()
+        await bot.get_channel(EMOTE_LOGS_ID).send(f"**{ctx.author.nick}** requested {emoji}×{cnt} in <#{ctx.channel.id}>")
+
 
 
 @bot.command()
@@ -76,9 +108,14 @@ async def ito(ctx, cnt: Optional[int]):
     await send_emojis(ctx, "ito", cnt)
 
 
+@bot.command()
+async def emote_leaderboard(ctx):
+    pass  # TODO: Implement
+
+
 @bot.command(name="r")
 async def repeat(ctx, *, text: Optional[str]):
-    if ctx.message.author == bot.user:  # No recursion
+    if ctx.author == bot.user:  # No recursion
         return
     if not text:
         await ctx.send("where text")
