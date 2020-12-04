@@ -10,18 +10,20 @@ from discord.errors import Forbidden
 from discord.ext import commands
 from dotenv import load_dotenv
 
+HKOI_SERVER_ID = 761629421966065686
+CONTEST_NOTIF_ID = 782946468289576990
+SPAM_ID = 772437968538435594
+BOT_STATUS_ID = 784303031319134229
+EMOTE_LOGS_ID = 784254643185909790
+
+EMOJIS = ("ick", "ito")
+
 logging.basicConfig(level=logging.WARNING)
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="!")
-
-HKOI_SERVER_ID = 761629421966065686
-CONTEST_NOTIF_ID = 782946468289576990
-SPAM_ID = 772437968538435594
-BOT_STATUS_ID = 784303031319134229
-EMOTE_LOGS_ID = 784254643185909790
 
 
 @bot.event
@@ -76,26 +78,34 @@ async def send_emojis(ctx, emoji_name, cnt):
     # Sanitize cnt
     try:
         cnt = int(cnt)
-        if cnt <= 0:     # Min: 1
-            raise ValueError
     except:
-        cnt = randint(1, 420)
+        cnt = randint(1, 69)  # One message at max, prevent spam
+    cnt = max(cnt, 0)    # Min: 0
     cnt = min(cnt, 420)  # Max: 420
 
-    sep_msgs = sep_emojis(emoji, cnt)
-    # Note: Asynchronously sent message arrive in arbitrary order
-    # We send the messages ASAP while keeping the message with the least emojis the last to arrive for A E S T H E T I C S
-    if sep_msgs[0] == sep_msgs[-1]:
-        await asyncio.gather(*[ctx.send(msg) for msg in sep_msgs])
-    else:
-        await asyncio.gather(*[ctx.send(msg) for msg in sep_msgs[:-1]])
-        await ctx.send(sep_msgs[-1])
+    if cnt:
+        sep_msgs = sep_emojis(emoji, cnt)
+        # Note: Asynchronously sent message arrive in arbitrary order
+        # We send the messages ASAP while keeping the message with the least emojis the last to arrive for A E S T H E T I C S
+        if sep_msgs[0] == sep_msgs[-1]:
+            for msg in sep_msgs:
+                asyncio.create_task(ctx.send(msg))
+        else:
+            async def f():
+                await asyncio.gather(*[ctx.send(msg) for msg in sep_msgs[:-1]])
+                await ctx.send(sep_msgs[-1])
+
+            asyncio.create_task(f())
+    else:  # cnt == 0
+        asyncio.create_task(ctx.send("\u200e"))
 
     # orz ITO asked this to implemented
     if ctx.guild.id == HKOI_SERVER_ID:  # HKOI server only
-        await ctx.message.delete()
-        await bot.get_channel(EMOTE_LOGS_ID).send(f"**{ctx.author.nick}** requested {emoji}×{cnt} in <#{ctx.channel.id}>")
-
+        asyncio.create_task(ctx.message.delete())
+        asyncio.create_task(bot.get_channel(EMOTE_LOGS_ID).send(f"**{ctx.author.nick}** requested {emoji}×{cnt} in <#{ctx.channel.id}>"))
+        if not cnt:
+            return
+        # TODO: save emoji use
 
 
 @bot.command()
@@ -109,7 +119,7 @@ async def ito(ctx, cnt: Optional[int]):
 
 
 @bot.command()
-async def emote_leaderboard(ctx):
+async def hkoi_leaderboard(ctx):
     pass  # TODO: Implement
 
 
