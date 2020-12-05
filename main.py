@@ -119,7 +119,12 @@ async def ito(ctx, cnt: Optional[int]):
 
 
 @bot.command()
-async def hkoi_leaderboard(ctx):
+async def tosi(ctx, cnt: Optional[int]):
+    await send_emojis(ctx, "tosi", cnt)
+
+
+@bot.command()
+async def leaderboard(ctx):
     pass  # TODO: Implement
 
 
