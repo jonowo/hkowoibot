@@ -1,35 +1,21 @@
 import asyncio
 import logging
-import os
-import traceback
-from random import randint
+from random import choice
 from typing import Optional
 
-import discord.utils
-from discord.errors import Forbidden
+from discord.errors import Forbidden, NotFound
 from discord.ext import commands
-from dotenv import load_dotenv
 
-HKOI_SERVER_ID = 761629421966065686
-CONTEST_NOTIF_ID = 782946468289576990
-SPAM_ID = 772437968538435594
-BOT_STATUS_ID = 784303031319134229
-EMOTE_LOGS_ID = 784254643185909790
-
-EMOJIS = ("ick", "ito")
+import emojis
+from constants import bot, TOKEN, BOT_STATUS_ID, STARTUP_MSGS, SHUTDOWN_MSGS
 
 logging.basicConfig(level=logging.WARNING)
-
-load_dotenv()
-TOKEN = os.getenv("DISCORD_TOKEN")
-
-bot = commands.Bot(command_prefix="!")
 
 
 @bot.event
 async def on_ready():
     print(f"Coggers activated. {bot.user} starting...")
-    await bot.get_channel(BOT_STATUS_ID).send("Coggers initiated. Starting...")
+    await bot.get_channel(BOT_STATUS_ID).send(choice(STARTUP_MSGS))
 
 
 @bot.command()
@@ -37,14 +23,14 @@ async def on_ready():
 async def shutdown(ctx):
     await asyncio.gather(
         ctx.send("Coggers deactivated. Shutting down..."),
-        bot.get_channel(BOT_STATUS_ID).send("Coggers deactivated. Shutting down...")
+        bot.get_channel(BOT_STATUS_ID).send(choice(SHUTDOWN_MSGS))
     )
-    await ctx.bot.logout()
+    await bot.logout()
 
 
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
+    if isinstance(error, (commands.CommandNotFound, NotFound)):
         return
     raise error from None
 
@@ -54,84 +40,8 @@ async def ping(ctx):
     await ctx.send("ping pong ding dong bing bong")
 
 
-def sep_emojis(emoji, cnt):
-    """Bypass Discord message limit by separating emoijs into muliple messges."""
-    emoji = str(emoji)
-    per_msg = 2000 // len(emoji)
-    sep_msgs = []
-    while True:
-        if cnt >= per_msg:
-            sep_msgs.append(emoji * per_msg)
-            cnt -= per_msg
-        else:
-            sep_msgs.append(emoji * cnt)
-            break
-    return sep_msgs
-
-
-async def send_emojis(ctx, emoji_name, cnt):
-    emoji = discord.utils.get(ctx.guild.emojis, name=emoji_name)
-    if not emoji:
-        await ctx.send("no")
-        return
-
-    # Sanitize cnt
-    try:
-        cnt = int(cnt)
-    except:
-        cnt = randint(1, 69)  # One message at max, prevent spam
-    cnt = max(cnt, 0)    # Min: 0
-    cnt = min(cnt, 420)  # Max: 420
-
-    if cnt:
-        sep_msgs = sep_emojis(emoji, cnt)
-        # Note: Asynchronously sent message arrive in arbitrary order
-        # We send the messages ASAP while keeping the message with the least emojis the last to arrive for A E S T H E T I C S
-        if sep_msgs[0] == sep_msgs[-1]:
-            for msg in sep_msgs:
-                asyncio.create_task(ctx.send(msg))
-        else:
-            async def f():
-                await asyncio.gather(*[ctx.send(msg) for msg in sep_msgs[:-1]])
-                await ctx.send(sep_msgs[-1])
-
-            asyncio.create_task(f())
-    else:  # cnt == 0
-        asyncio.create_task(ctx.send("\u200e"))
-
-    # orz ITO asked this to implemented
-    if ctx.guild.id == HKOI_SERVER_ID:  # HKOI server only
-        asyncio.create_task(ctx.message.delete())
-        asyncio.create_task(bot.get_channel(EMOTE_LOGS_ID).send(f"**{ctx.author.nick}** requested {emoji}×{cnt} in <#{ctx.channel.id}>"))
-        if not cnt:
-            return
-        # TODO: save emoji use
-
-
-@bot.command()
-async def ick(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "ick", cnt)
-
-
-@bot.command()
-async def ito(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "ito", cnt)
-
-
-@bot.command()
-async def tosi(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "tosi", cnt)
-
-
-@bot.command()
-async def leaderboard(ctx):
-    pass  # TODO: Implement
-
-
 @bot.command(name="r")
 async def repeat(ctx, *, text: Optional[str]):
-    if ctx.author == bot.user:  # No recursion
-        return
     if not text:
         await ctx.send("where text")
         return
@@ -144,4 +54,5 @@ async def repeat(ctx, *, text: Optional[str]):
         pass
 
 
-bot.run(TOKEN)
+if __name__ == "__main__":
+    bot.run(TOKEN)
