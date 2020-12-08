@@ -3,6 +3,7 @@ from random import randint
 from typing import Optional
 
 import discord
+from discord.ext import commands
 
 from constants import bot, HKOI_SERVER_ID, EMOTE_LOGS_ID, USER_TO_EMOJI
 
@@ -16,6 +17,8 @@ def sep_emojis(emoji, cnt):
         if cnt >= per_msg:
             sep_msgs.append(emoji * per_msg)
             cnt -= per_msg
+            if cnt == 0:
+                break
         else:
             sep_msgs.append(emoji * cnt)
             break
@@ -66,39 +69,36 @@ async def send_emojis(ctx, emoji_name, cnt):
         # TODO: Save emoji use data in database
 
 
-@bot.command()
-async def ick(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "ick", cnt)
+class Emoji(commands.Cog):
+    """Emoji commands"""
 
+    @commands.command()
+    async def ick(self, ctx, count: Optional[int]):
+        await send_emojis(ctx, "ick", count)
 
-@bot.command()
-async def ito(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "ito", cnt)
+    @commands.command()
+    async def ito(self, ctx, count: Optional[int]):
+        await send_emojis(ctx, "ito", count)
 
+    @commands.command()
+    async def tosi(self, ctx, count: Optional[int]):
+        await send_emojis(ctx, "tosi", count)
 
-@bot.command()
-async def tosi(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "tosi", cnt)
+    @commands.command()
+    async def yeet(self, ctx, count: Optional[int]):
+        await send_emojis(ctx, "yeet", count)
 
+    @commands.command()
+    async def ic(self, ctx, count: Optional[int]):
+        await send_emojis(ctx, "ic", count)
 
-@bot.command()
-async def yeet(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "yeet", cnt)
+    @commands.command()
+    async def me(self, ctx, count: Optional[int]):
+        if ctx.author.id in USER_TO_EMOJI:
+            await send_emojis(ctx, USER_TO_EMOJI[ctx.author.id], count)
+        else:
+            await ctx.send("no u")
 
-
-@bot.command()
-async def ic(ctx, cnt: Optional[int]):
-    await send_emojis(ctx, "ic", cnt)
-
-
-@bot.command()
-async def me(ctx, cnt: Optional[int]):
-    if ctx.author.id in USER_TO_EMOJI:
-        await send_emojis(ctx, USER_TO_EMOJI[ctx.author.id], cnt)
-    else:
-        await ctx.send("no u")
-
-
-@bot.command()
-async def leaderboard(ctx):  # for use of emojis commands in HKOI server
-    pass  # TODO: Implement
+    @commands.command()
+    async def leaderboard(self, ctx):  # for use of emojis commands in HKOI server
+        pass  # TODO: Implement

@@ -28,4 +28,4 @@ USER_TO_EMOJI = {
     628523058742820884: "ic"
 }
 
-bot = Bot(command_prefix="!")
+bot = Bot(command_prefix=("!", "."), help_command=None)
