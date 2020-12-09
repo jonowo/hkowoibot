@@ -9,8 +9,6 @@ from constants import bot, BOT_STATUS_ID, SHUTDOWN_MSGS
 
 
 class Miscellaneous(commands.Cog):
-    """Miscellaneous commands."""
-
     @commands.command()
     @commands.is_owner()
     async def shutdown(self, ctx):

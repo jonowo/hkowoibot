@@ -70,8 +70,6 @@ async def send_emojis(ctx, emoji_name, cnt):
 
 
 class Emoji(commands.Cog):
-    """Emoji commands"""
-
     @commands.command()
     async def ick(self, ctx, count: Optional[int]):
         await send_emojis(ctx, "ick", count)

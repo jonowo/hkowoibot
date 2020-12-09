@@ -7,6 +7,7 @@ from discord.ext import commands
 from constants import bot, TOKEN, BOT_STATUS_ID, STARTUP_MSGS
 from emojis import Emoji
 from misc import Miscellaneous
+from scheduled_tasks import ScheduledTasks
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -25,8 +26,9 @@ async def on_command_error(ctx, error):
 
 
 def main():
-    bot.add_cog(Miscellaneous(bot))
-    bot.add_cog(Emoji(bot))
+    bot.add_cog(Miscellaneous())
+    bot.add_cog(Emoji())
+    bot.add_cog(ScheduledTasks())
     bot.run(TOKEN)
 
 
