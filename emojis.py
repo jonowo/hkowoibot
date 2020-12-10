@@ -1,6 +1,6 @@
 import asyncio
-from random import randint
-from typing import Optional
+import random
+from typing import Optional, List  # List instead of list for Python 3.8 compatibility
 
 import discord
 from discord.ext import commands
@@ -8,7 +8,7 @@ from discord.ext import commands
 from constants import bot, HKOI_SERVER_ID, EMOTE_LOGS_ID, USER_TO_EMOJI
 
 
-def sep_emojis(emoji, cnt):
+def sep_emojis(emoji: str, cnt: int) -> List[str]:
     """Bypass Discord message limit by separating emoijs into muliple messges."""
     emoji = str(emoji)
     per_msg = 2000 // len(emoji)
@@ -25,7 +25,7 @@ def sep_emojis(emoji, cnt):
     return sep_msgs
 
 
-async def send_emojis(ctx, emoji_name, cnt):
+async def send_emojis(ctx: commands.Context, emoji_name: str, cnt: int) -> None:
     emoji = discord.utils.get(ctx.guild.emojis, name=emoji_name)
     if not emoji:
         await ctx.send("no u")
@@ -35,7 +35,7 @@ async def send_emojis(ctx, emoji_name, cnt):
     try:
         cnt = int(cnt)
     except:
-        cnt = randint(1, 69)  # One message at max, prevent spam
+        cnt = random.randint(1, 69)  # One message at max, prevent spam
     cnt = max(cnt, 0)  # Min: 0
     cnt = min(cnt, 420)  # Max: 420
 
@@ -71,32 +71,32 @@ async def send_emojis(ctx, emoji_name, cnt):
 
 class Emoji(commands.Cog):
     @commands.command()
-    async def ick(self, ctx, count: Optional[int]):
+    async def ick(self, ctx: commands.Context, count: Optional[int]) -> None:
         await send_emojis(ctx, "ick", count)
 
     @commands.command()
-    async def ito(self, ctx, count: Optional[int]):
+    async def ito(self, ctx: commands.Context, count: Optional[int]) -> None:
         await send_emojis(ctx, "ito", count)
 
     @commands.command()
-    async def tosi(self, ctx, count: Optional[int]):
+    async def tosi(self, ctx: commands.Context, count: Optional[int]) -> None:
         await send_emojis(ctx, "tosi", count)
 
     @commands.command()
-    async def yeet(self, ctx, count: Optional[int]):
+    async def yeet(self, ctx: commands.Context, count: Optional[int]) -> None:
         await send_emojis(ctx, "yeet", count)
 
     @commands.command()
-    async def ic(self, ctx, count: Optional[int]):
+    async def ic(self, ctx: commands.Context, count: Optional[int]) -> None:
         await send_emojis(ctx, "ic", count)
 
     @commands.command()
-    async def me(self, ctx, count: Optional[int]):
+    async def me(self, ctx: commands.Context, count: Optional[int]) -> None:
         if ctx.author.id in USER_TO_EMOJI:
             await send_emojis(ctx, USER_TO_EMOJI[ctx.author.id], count)
         else:
             await ctx.send("no u")
 
     @commands.command()
-    async def leaderboard(self, ctx):  # for use of emojis commands in HKOI server
+    async def leaderboard(self, ctx: commands.Context) -> None:  # for use of emojis commands in HKOI server
         pass  # TODO: Implement

@@ -10,16 +10,7 @@ HKOI_SERVER_ID = 761629421966065686
 BOT_STATUS_ID = 784303031319134229
 EMOTE_LOGS_ID = 784254643185909790
 CONTEST_NOTIF_ID = 782946468289576990
-SPAM_ID = 772437968538435594
 CONTEST_NOTIF_ROLE_ID = 782946347594416159
-
-STARTUP_MSGS = [
-    "Coggers initiated. Starting..."
-]
-
-SHUTDOWN_MSGS = [
-    "Coggers deactivated. Shutting down..."
-]
 
 USER_TO_EMOJI = {
     481311190539304960: "ick",
@@ -28,5 +19,13 @@ USER_TO_EMOJI = {
     530347323973435392: "yeet",
     628523058742820884: "ic"
 }
+
+STARTUP_MSGS = (
+    "Coggers initiated. Starting...",
+)
+
+SHUTDOWN_MSGS = (
+    "Coggers deactivated. Shutting down...",
+)
 
 bot = Bot(command_prefix=("!", "."), help_command=None)

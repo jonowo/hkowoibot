@@ -1,5 +1,6 @@
+import asyncio
 import logging
-from random import choice
+import random
 
 from discord.errors import NotFound
 from discord.ext import commands
@@ -13,14 +14,16 @@ logging.basicConfig(level=logging.WARNING)
 
 
 @bot.event
-async def on_ready():
+async def on_ready() -> None:
     print(f"Coggers activated. {bot.user} starting...")
-    await bot.get_channel(BOT_STATUS_ID).send(choice(STARTUP_MSGS))
+    await bot.get_channel(BOT_STATUS_ID).send(random.choice(STARTUP_MSGS))
 
 
 @bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, (commands.CommandNotFound, commands.NotOwner, NotFound)):
+async def on_command_error(ctx: commands.Context, error: Exception) -> None:
+    if isinstance(error, (commands.CommandNotFound, commands.NotOwner)):
+        return
+    if isinstance(error, commands.CommandInvokeError) and "NotFound" in str(error):
         return
     raise error from None
 
