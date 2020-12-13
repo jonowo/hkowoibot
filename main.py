@@ -2,6 +2,7 @@ import asyncio
 import logging
 import random
 
+from discord import Game, ActivityType
 from discord.errors import NotFound
 from discord.ext import commands
 
@@ -16,7 +17,10 @@ logging.basicConfig(level=logging.WARNING)
 @bot.event
 async def on_ready() -> None:
     print(f"Coggers activated. {bot.user} starting...")
-    await bot.get_channel(BOT_STATUS_ID).send(random.choice(STARTUP_MSGS))
+    await asyncio.gather(
+        bot.change_presence(activity=Game(name="your mom")),
+        bot.get_channel(BOT_STATUS_ID).send(random.choice(STARTUP_MSGS))
+    )
 
 
 @bot.event
