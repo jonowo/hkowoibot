@@ -2,7 +2,7 @@ import asyncio
 import random
 from typing import Optional, List  # List instead of list for Python 3.8 compatibility
 
-import discord
+import discord.utils
 from discord.ext import commands
 
 from constants import bot, HKOI_SERVER_ID, EMOTE_LOGS_ID, USER_TO_EMOJI

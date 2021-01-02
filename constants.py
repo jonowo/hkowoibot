@@ -28,4 +28,22 @@ SHUTDOWN_MSGS = (
     "Coggers deactivated. Shutting down...",
 )
 
-bot = Bot(command_prefix=("!", "."), help_command=None)
+CONTEST_CNT = (
+    "is a non-negative number of",
+    "is an integral number of",
+    "are zero or more",
+    "is an even or odd number of",
+    "is less than π or more than e",
+    "is a real number of",
+    "is a complex number of",
+    "are 69",
+    "are 420",
+    "are 69420",
+    "is 0/0",
+    "are [REDACTED]",
+    "could be",
+    "may or may not be",
+    "is a possiblity that there are"
+)
+
+bot = Bot(command_prefix=("!", "."), case_insensitive=True, help_command=None)

@@ -1,22 +1,21 @@
-import asyncio
 import random
-from datetime import datetime, time
+from datetime import time
 
-import discord.utils
 from discord.ext import commands, tasks
 
-from constants import bot, CONTEST_NOTIF_ID, CONTEST_NOTIF_ROLE_ID
+from constants import CONTEST_NOTIF_ID, CONTEST_NOTIF_ROLE_ID, CONTEST_CNT
 from utils import sleep_until
 
 
 class ScheduledTasks(commands.Cog):
-    def __init__(self) -> None:
+    def __init__(self, bot) -> None:
+        self.bot = bot
         self.contest_notif.start()
 
     @tasks.loop(hours=24)
     async def contest_notif(self) -> None:
-        await bot.get_channel(CONTEST_NOTIF_ID).send(
-            f"<@&{CONTEST_NOTIF_ROLE_ID}> There is a non-negative number of contests today."
+        await self.bot.get_channel(CONTEST_NOTIF_ID).send(
+            f"<@&{CONTEST_NOTIF_ROLE_ID}> There {random.choice(CONTEST_CNT)} contests today."
         )
 
     @contest_notif.before_loop

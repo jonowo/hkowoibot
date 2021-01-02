@@ -6,5 +6,4 @@ A Discord bot to distract HKOI humans and orz non-humans from coding.
 - Add more messages for
   - startup
   - shutdown
-  - linda
 - Leaderboard for emoji use
