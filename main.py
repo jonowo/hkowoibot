@@ -26,7 +26,7 @@ async def on_ready() -> None:
 
 @bot.listen('on_message')  # Don't use @bot.event since it overrides the default message processing
 async def on_message(msg: Message) -> None:
-    if msg.guild.id != HKOI_SERVER_ID:
+    if msg.guild.id != HKOI_SERVER_ID or msg.author == bot.user:
         return
     for role in msg.role_mentions:
         if role.name == "Owner":
