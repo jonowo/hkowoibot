@@ -91,6 +91,10 @@ class Emoji(commands.Cog):
         await send_emojis(ctx, "ic", count)
 
     @commands.command()
+    async def c8k(self, ctx: commands.Context, count: Optional[int]) -> None:
+        await send_emojis(ctx, "c8k", count)
+
+    @commands.command()
     async def me(self, ctx: commands.Context, count: Optional[int]) -> None:
         if ctx.author.id in USER_TO_EMOJI:
             await send_emojis(ctx, USER_TO_EMOJI[ctx.author.id], count)
@@ -98,5 +102,5 @@ class Emoji(commands.Cog):
             await ctx.send("no u")
 
     @commands.command()
-    async def leaderboard(self, ctx: commands.Context) -> None:  # for use of emojis commands in HKOI server
+    async def emojitop(self, ctx: commands.Context) -> None:  # for top use of emojis commands in HKOI server
         pass  # TODO: Implement
