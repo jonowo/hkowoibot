@@ -95,6 +95,10 @@ class Emoji(commands.Cog):
         await send_emojis(ctx, "c8k", count)
 
     @commands.command()
+    async def elison(self, ctx: commands.Context, count: Optional[int]) -> None:
+        await send_emojis(ctx, "elison", count)
+
+    @commands.command()
     async def me(self, ctx: commands.Context, count: Optional[int]) -> None:
         if ctx.author.id in USER_TO_EMOJI:
             await send_emojis(ctx, USER_TO_EMOJI[ctx.author.id], count)
