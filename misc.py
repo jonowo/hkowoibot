@@ -33,7 +33,7 @@ class Miscellaneous(commands.Cog):
             return
         try:
             await asyncio.gather(
-                ctx.send(text),
+                ctx.send(text, tts=True),
                 ctx.message.delete()
             )
         except Forbidden:

@@ -1,17 +1,19 @@
 import asyncio
 import logging
 import random
+import time
 from typing import Optional
 
 import discord.utils
 from discord import Game, Message
 from discord.ext import commands
 
-from constants import bot, TOKEN, HKOI_SERVER_ID, BOT_STATUS_ID, STARTUP_MSGS
+from constants import bot, TOKEN, HKOI_SERVER_ID, BOT_STATUS_ID, OWNER_ROLE_ID, STARTUP_MSGS
 from emojis import Emoji
 from misc import Miscellaneous
 from scheduled_tasks import ScheduledTasks
 
+random.seed(time.time())
 logging.basicConfig(level=logging.WARNING)
 
 
@@ -29,7 +31,7 @@ async def on_message(msg: Message) -> None:
     if msg.guild.id != HKOI_SERVER_ID or msg.author == bot.user:
         return
     for role in msg.role_mentions:
-        if role.name == "Owner":
+        if role.id == OWNER_ROLE_ID:
             asyncio.create_task(msg.channel.send(discord.utils.get(msg.guild.emojis, name="ito")))
             break
     if msg.content.lower().startswith("imagine "):
