@@ -7,11 +7,9 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 HKOI_SERVER_ID = 761629421966065686
-BOT_STATUS_ID = 784303031319134229
 EMOTE_LOGS_ID = 784254643185909790
 CONTEST_NOTIF_ID = 782946468289576990
 CONTEST_NOTIF_ROLE_ID = 782946347594416159
-OWNER_ROLE_ID = 794577286137249872
 
 USER_TO_EMOJI = {
     481311190539304960: "ick",
@@ -22,14 +20,6 @@ USER_TO_EMOJI = {
     634946884787634179: "c8k",
     677800859882749962: "elison"
 }
-
-STARTUP_MSGS = (
-    "Coggers initiated. Starting...",
-)
-
-SHUTDOWN_MSGS = (
-    "Coggers deactivated. Shutting down...",
-)
 
 CONTEST_CNT = (
     "is a non-negative number of",
@@ -49,4 +39,4 @@ CONTEST_CNT = (
     "is a possiblity that there are"
 )
 
-bot = Bot(command_prefix=("!", "."), case_insensitive=True, help_command=None)
+bot = Bot(command_prefix=("!", ".", "…"), case_insensitive=True, help_command=None)

@@ -66,7 +66,6 @@ async def send_emojis(ctx: commands.Context, emoji_name: str, cnt: int) -> None:
         )
         if not cnt:
             return
-        # TODO: Save emoji use data in database
 
 
 class Emoji(commands.Cog):
@@ -104,7 +103,3 @@ class Emoji(commands.Cog):
             await send_emojis(ctx, USER_TO_EMOJI[ctx.author.id], count)
         else:
             await ctx.send("no u")
-
-    @commands.command()
-    async def emojitop(self, ctx: commands.Context) -> None:  # for top use of emojis commands in HKOI server
-        pass  # TODO: Implement
